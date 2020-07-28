@@ -160,10 +160,9 @@ impl<W: Write + Unpin> ApiCaller<W> {
 
     /// Send ["blobs","has"] request.
     pub async fn blobs_has_req_send(&mut self, blob_id: &str) -> Result<RequestNo> {
-        let args = &dto::BlobsHasIn::new(blob_id.to_string());
         let req_no = self
             .rpc
-            .send_request(ApiMethod::BlobsHas.selector(), RpcType::Source, &args)
+            .send_request(ApiMethod::BlobsHas.selector(), RpcType::Async, &blob_id)
             .await?;
         Ok(req_no)
     }
