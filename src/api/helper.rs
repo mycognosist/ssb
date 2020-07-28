@@ -15,6 +15,7 @@ pub enum ApiMethod {
     CreateFeedStream,
     Latest,
     BlobsGet,
+    BlobsHas,
     BlobsCreateWants,
 }
 
@@ -28,6 +29,7 @@ impl ApiMethod {
             CreateFeedStream => &["createFeedStream"],
             Latest => &["latest"],
             BlobsGet => &["blobs", "get"],
+            BlobsHas => &["blobs", "has"],
             BlobsCreateWants => &["blobs", "createWants"],
         }
     }
@@ -40,6 +42,7 @@ impl ApiMethod {
             ["createFeedStream"] => Some(CreateFeedStream),
             ["latest"] => Some(Latest),
             ["blobs", "get"] => Some(BlobsGet),
+            ["blobs", "has"] => Some(BlobsHas),
             ["blobs", "createWants"] => Some(BlobsCreateWants),
             _ => None,
         }
@@ -151,6 +154,16 @@ impl<W: Write + Unpin> ApiCaller<W> {
         let req_no = self
             .rpc
             .send_request(ApiMethod::BlobsGet.selector(), RpcType::Source, &args)
+            .await?;
+        Ok(req_no)
+    }
+
+    /// Send ["blobs","has"] request.
+    pub async fn blobs_has_req_send(&mut self, blob_id: &str) -> Result<RequestNo> {
+        let args = &dto::BlobsHasIn::new(blob_id.to_string());
+        let req_no = self
+            .rpc
+            .send_request(ApiMethod::BlobsHas.selector(), RpcType::Source, &args)
             .await?;
         Ok(req_no)
     }
