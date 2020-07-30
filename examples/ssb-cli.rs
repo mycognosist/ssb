@@ -41,6 +41,9 @@ struct Opt {
 pub fn whoami_res_parse(body: &[u8]) -> Result<WhoAmIOut> {
     Ok(serde_json::from_slice(body)?)
 }
+pub fn blobs_has_res_parse(body: &[u8]) -> Result<bool> {
+    Ok(serde_json::from_slice(body)?)
+}
 pub fn message_res_parse(body: &[u8]) -> Result<Message> {
     Ok(Message::from_slice(body)?)
 }
@@ -242,7 +245,7 @@ async fn main() -> Result<()> {
             ("has", 2) => {
                 let blob_id = &args[1];
                 let req_id = client.blobs_has_req_send(blob_id).await?;
-                let msg = get_async(&mut rpc_reader, req_id, message_res_parse).await?;
+                let msg = get_async(&mut rpc_reader, req_id, blobs_has_res_parse).await?;
                 println!("{:?}", msg);
             }
             ("user", 2) => {
